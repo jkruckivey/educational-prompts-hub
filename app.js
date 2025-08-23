@@ -297,13 +297,21 @@ class PromptsApp {
           ${chapter ? `<div class="card-chapter" style="display:block; margin-top:.25rem;">${chapter}</div>` : ''}
         </div>
 
-        <div class="card-meta">
+        ${prompt?.prompt ? `
+        <div class="prompt-preview" style="margin-top:1.5rem;">
+          <h5 style="margin:0 0 .5rem 0; font-weight:700; color:var(--ivey-green);">The Prompt:</h5>
+          <div style="background:#f8fffe; padding:1rem; border-radius:12px; border-left:3px solid var(--ivey-green); font-style:italic; line-height:1.6;">
+            "${prompt.prompt}"
+          </div>
+        </div>` : ''}
+
+        <div class="card-meta" style="margin-top:1rem;">
           ${category ? `<span class="category-tag">${category}</span>` : ''}
           ${difficulty ? `<span class="card-tag">${difficulty}</span>` : ''}
           ${time ? `<span class="card-tag">${time}</span>` : ''}
         </div>
 
-        ${chipsHTML ? `<div class="card-tags">${chipsHTML}</div>` : ''}
+        ${chipsHTML ? `<div class="card-tags" style="margin-top:.75rem;"><strong style="font-size:.85rem; color:var(--ivey-gray-10); margin-right:.5rem;">Tags:</strong>${chipsHTML}</div>` : ''}
       </div>
     `;
 
