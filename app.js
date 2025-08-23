@@ -331,6 +331,10 @@ class PromptsApp {
           <input type="text" id="chatInput" placeholder="Type your message..." class="chat-input" disabled>
           <button id="sendMessage" class="btn btn-primary" disabled>Send</button>
         </div>
+        <div class="follow-up-suggestions" id="followUpSuggestions" style="display:none;">
+          <h4 style="margin:1rem 0 .5rem 0; color:var(--ivey-green); font-weight:700;">💡 Suggested Next Steps</h4>
+          <div class="suggestions-list" id="suggestionsList"></div>
+        </div>
       </div>
     `;
 
@@ -491,6 +495,12 @@ class PromptsApp {
     // Generate contextual AI response
     const response = await this.generateContextualResponse(message);
     this.addMessage(container, 'ai', response);
+
+    // Check if we should show follow-up suggestions
+    const messageCount = container.querySelectorAll('.message').length;
+    if (messageCount >= 4 && !container.closest('.chat-area').querySelector('.follow-up-suggestions[data-loaded="true"]')) {
+      this.generateFollowUpSuggestions(container.closest('.chat-area'));
+    }
   }
 
   async generateIntelligentInitialResponse(container, prompt) {
@@ -612,6 +622,129 @@ Keep it conversational and helpful, like a friendly expert educator would.`;
       exportBtn.textContent = originalText;
       exportBtn.style.background = '';
     }, 2000);
+  }
+
+  async generateFollowUpSuggestions(chatArea) {
+    const suggestionsContainer = chatArea.querySelector('#followUpSuggestions');
+    const suggestionsList = chatArea.querySelector('#suggestionsList');
+    
+    if (!suggestionsContainer || !suggestionsList) return;
+
+    try {
+      // Analyze the conversation to suggest related prompts
+      const messages = chatArea.querySelectorAll('.message .message-content');
+      const conversationText = Array.from(messages)
+        .map(msg => msg.textContent.trim())
+        .filter(text => text && !text.includes('span'))  // Filter out typing indicators
+        .slice(-6)  // Last 6 messages for context
+        .join(' ');
+
+      const suggestionPrompt = `Based on this educational conversation: "${conversationText}"
+
+From these available educational prompts, suggest the 3 most relevant next steps:
+
+1. "Generate Explanations, Examples, and Analogies" by Lilach Mollick - Generate clear examples and analogies for concepts
+2. "Improve Class Slides" by Dan Levy - Get specific advice to improve presentations  
+3. "Generate Engaging In-Class Activities" by Kimberly Acquaviva - Create interactive classroom activities
+4. "Design Assessment Questions" by Dan Levy - Create exit ticket questions and assessments
+5. "Diagnostic Quiz Generator" by Harvard Faculty - Create quizzes to assess understanding
+6. "Student Learning Template" by Dan Levy - Provide structured learning templates for students
+7. "Teaching Assistant" by Educational Experts - General teaching support and guidance
+8. "Create Rubrics" by Assessment Experts - Develop grading rubrics for assignments
+
+Respond with exactly 3 suggestions in this format:
+SUGGESTION 1: [Prompt Title]|[Author]|[Brief reason why it's relevant]
+SUGGESTION 2: [Prompt Title]|[Author]|[Brief reason why it's relevant]  
+SUGGESTION 3: [Prompt Title]|[Author]|[Brief reason why it's relevant]`;
+
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: suggestionPrompt,
+          prompt: 'You are an educational AI that suggests relevant follow-up prompts based on conversations.'
+        })
+      });
+
+      if (!response.ok) throw new Error(`API error: ${response.status}`);
+
+      const data = await response.json();
+      const suggestions = this.parseSuggestions(data.message);
+      
+      if (suggestions.length > 0) {
+        this.renderSuggestions(suggestionsList, suggestions);
+        suggestionsContainer.style.display = 'block';
+        suggestionsContainer.setAttribute('data-loaded', 'true');
+      }
+
+    } catch (error) {
+      console.error('Failed to generate follow-up suggestions:', error);
+    }
+  }
+
+  parseSuggestions(aiResponse) {
+    const suggestions = [];
+    const lines = aiResponse.split('\n').filter(line => line.includes('SUGGESTION'));
+    
+    lines.forEach(line => {
+      const parts = line.split('|');
+      if (parts.length >= 3) {
+        const title = parts[0].replace(/SUGGESTION \d+:\s*/, '').trim();
+        const author = parts[1].trim();
+        const reason = parts[2].trim();
+        
+        // Find the actual prompt from our data
+        const matchingPrompt = this.prompts.find(p => 
+          p.title.toLowerCase().includes(title.toLowerCase()) ||
+          title.toLowerCase().includes(p.title.toLowerCase())
+        );
+        
+        if (matchingPrompt) {
+          suggestions.push({
+            ...matchingPrompt,
+            reason: reason
+          });
+        }
+      }
+    });
+    
+    return suggestions.slice(0, 3);
+  }
+
+  renderSuggestions(container, suggestions) {
+    container.innerHTML = '';
+    
+    suggestions.forEach(suggestion => {
+      const card = document.createElement('div');
+      card.className = 'suggestion-card';
+      card.innerHTML = `
+        <div>
+          <div class="suggestion-title">${suggestion.title}</div>
+          <div class="suggestion-author">by ${suggestion.author}</div>
+        </div>
+        <div class="suggestion-arrow">→</div>
+      `;
+      
+      card.addEventListener('click', () => {
+        // Add to recent prompts and switch to the suggested prompt
+        this.addToRecentPrompts(suggestion);
+        
+        // Find the original card for this prompt
+        const originalCard = document.querySelector(`[data-strategy-id="${suggestion.id}"]`);
+        if (originalCard) {
+          // Close current chat and open new one
+          const currentCard = container.closest('.strategy-card');
+          this.closeExpandedCard(currentCard);
+          
+          // Small delay to allow close animation, then open new prompt
+          setTimeout(() => {
+            this.expandCard(originalCard, suggestion, 'chat');
+          }, 300);
+        }
+      });
+      
+      container.appendChild(card);
+    });
   }
 
   async generateContextualResponse(userMessage) {

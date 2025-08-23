@@ -194,6 +194,19 @@ body{
 .chat-input::placeholder{ color:#97a0ab }
 .chat-input:focus{ outline:none; border-color:var(--ivey-green); box-shadow:0 0 0 4px rgba(3,70,56,.15) }
 
+/* Follow-up Suggestions */
+.follow-up-suggestions{ margin-top:1.5rem; padding:1rem; background:#f8fffe; border-radius:12px; border-left:3px solid var(--ivey-green); }
+.suggestions-list{ display:flex; flex-direction:column; gap:.5rem; }
+.suggestion-card{ 
+  background:white; padding:.75rem 1rem; border-radius:8px; border:1px solid var(--brand-border); 
+  cursor:pointer; transition:all .2s ease;
+  display:flex; justify-content:space-between; align-items:center;
+}
+.suggestion-card:hover{ border-color:var(--ivey-green); transform:translateY(-1px); box-shadow:0 4px 12px rgba(3,70,56,.1); }
+.suggestion-title{ font-weight:600; font-size:.9rem; color:#1f2937; }
+.suggestion-author{ font-size:.75rem; color:var(--ivey-gray-10); font-style:italic; }
+.suggestion-arrow{ color:var(--ivey-green); font-weight:700; }
+
 /* EXPANSION STATES
    - .expanded-full (chat): full-viewport takeover
    - .expanded-details (details): in-flow wide expansion only
