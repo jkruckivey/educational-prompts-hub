@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Educational Strategies Hub</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <h1 class="site-title">Educational Prompts Hub</h1>
+      <p class="site-subtitle">Discover and try proven ChatGPT prompts from expert educators</p>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <div class="container">
+      <!-- Prompt Cards Grid (no search/filters/results) -->
+      <section class="strategies-grid" id="strategiesGrid"></section>
+    </div>
+  </main>
+
+  <!-- Strategy Card Template -->
+  <template id="strategyCardTemplate">
+    <div class="strategy-card" data-strategy-id="">
+      <div class="card-header">
+        <h3 class="card-title"></h3>
+        <span class="difficulty-badge"></span>
+      </div>
+      <div class="card-content">
+        <p class="card-description"></p>
+        <div class="card-meta">
+          <span class="category-tag"></span>
+          <span class="time-estimate"></span>
+        </div>
+        <div class="card-tags"></div>
+      </div>
+      <div class="card-actions">
+        <button class="btn btn-primary explore-btn">Try This Prompt</button>
+        <button class="btn details-btn">View Details</button>
+      </div>
+    </div>
+  </template>
+
+  <!-- Scripts -->
+  <script src="strategies-data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

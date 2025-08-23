@@ -1,0 +1,217 @@
+/* =====================================================
+   IVEY THEME � merged stylesheet (streamlined)
+   - Primary: Ivey Green #034638
+   - Accent:  Ivey Purple #582C83
+   - Neutral: Cool Gray 10 #63666A
+   Font: Figtree (loaded in index.html)
+   ===================================================== */
+
+:root{
+  --ivey-green:#034638;
+  --ivey-green-600:#0a5c49;
+  --ivey-purple:#582C83;
+  --ivey-gray-10:#63666A;
+  --brand-surface:#ffffff;
+  --brand-border:#e7eaee;
+  --shadow-lg:0 8px 30px rgba(3,70,56,.12);
+  --shadow-md:0 6px 20px rgba(0,0,0,.08);
+  --radius:16px;
+  --card-transition-duration:.6s;
+}
+
+/* Reset & base */
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family:"Figtree",system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif;
+  line-height:1.5;
+  color:#1f2937;
+  background:#f7faf9;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+
+.container{
+  max-width:1100px;
+  margin:0 auto;
+  padding:1.25rem;
+}
+
+/* Header */
+.header{
+  background:#fff;
+  border-top:6px solid var(--ivey-green);
+  border-bottom:1px solid var(--brand-border);
+  position:sticky;
+  top:0;
+  z-index:10;
+}
+.header::after{
+  content:"";
+  position:absolute; left:0; right:0; bottom:-1px;
+  height:3px; background:var(--ivey-purple);
+}
+.site-title{ font-weight:900; letter-spacing:.01em; color:var(--ivey-green); margin:.5rem 0 0 0 }
+.site-subtitle{ color:var(--ivey-gray-10); margin:.25rem 0 0 0 }
+
+/* Grid */
+.strategies-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+  gap:1rem;
+  align-items:stretch;
+}
+
+/* Card */
+.strategy-card{
+  display:flex; flex-direction:column;
+  background:var(--brand-surface);
+  border:1px solid rgba(99,102,106,.12);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow-lg);
+  padding:1.25rem;
+  transition:transform .18s ease, box-shadow .2s ease;
+}
+.strategy-card:hover{ transform:translateY(-2px); box-shadow:0 12px 38px rgba(3,70,56,.16) }
+
+.card-title{ font-weight:800; font-size:1.05rem; margin:0 0 .35rem 0 }
+.card-description{ color:var(--ivey-gray-10); font-size:.98rem }
+.card-tags{ display:flex; flex-wrap:wrap; gap:.35rem; margin-top:.6rem }
+
+/* TAGS � make them look like tags, not buttons */
+.category-tag,.card-tag{
+  display:inline-flex; align-items:center; gap:.35rem;
+  padding:.25rem .5rem; border-radius:10px;
+  font-weight:600; font-size:.85rem; letter-spacing:.01em;
+  background:#f1f5f9;              /* soft neutral */
+  border:1px solid #e5e7eb;        /* subtle edge */
+  color:#475569;                    /* slate-ish */
+  cursor:default;                   /* not interactive */
+  box-shadow:none;
+}
+.category-tag:hover,.card-tag:hover{ transform:none }
+
+/* Meta row */
+.card-meta{ display:flex; flex-wrap:wrap; gap:.35rem; margin-top:.5rem }
+
+/* Actions */
+.card-actions{ margin-top:auto; display:flex; gap:.5rem; align-items:center }
+
+/* Buttons */
+.btn, .btn-primary, .btn-secondary, .btn-outline, .btn-ghost, .details-btn, .explore-btn{
+  -webkit-tap-highlight-color:transparent;
+  display:inline-flex; align-items:center; justify-content:center; gap:.5rem;
+  padding:.7rem 1rem; border-radius:999px; font-weight:700; line-height:1;
+  border:1px solid transparent; cursor:pointer;
+  transition:transform .12s ease, box-shadow .2s ease, background-color .2s ease, border-color .2s ease, color .2s ease;
+}
+.btn:focus-visible, .btn-primary:focus-visible, .btn-secondary:focus-visible,
+.btn-outline:focus-visible, .btn-ghost:focus-visible, .details-btn:focus-visible, .explore-btn:focus-visible{
+  outline:none;
+  box-shadow:0 0 0 3px rgba(88,44,131,.18), 0 0 0 6px rgba(3,70,56,.35);
+}
+.btn:active, .btn-primary:active, .btn-secondary:active, .btn-outline:active, .btn-ghost:active, .details-btn:active, .explore-btn:active{
+  transform:translateY(1px);
+}
+
+.btn-primary, .explore-btn{ background:var(--ivey-green); color:#fff; box-shadow:0 4px 14px rgba(3,70,56,.25) }
+.btn-primary:hover, .explore-btn:hover{ background:var(--ivey-green-600) }
+
+.btn-secondary{ background:var(--ivey-purple); color:#fff; box-shadow:0 4px 14px rgba(88,44,131,.22) }
+.btn-secondary:hover{ filter:brightness(1.06) }
+
+.btn-outline{ background:#fff; color:var(--ivey-green); border-color:var(--ivey-green) }
+.btn-outline:hover{ background:rgba(3,70,56,.06); border-color:#0a5c49; color:#0a5c49 }
+
+.btn-ghost{ background:transparent; color:var(--ivey-green) }
+.btn-ghost:hover{ background:rgba(3,70,56,.06) }
+
+/* Make "View Details" specifically use purple accent */
+.details-btn{
+  background:var(--ivey-purple) !important;
+  color:#fff !important;
+  border-color:transparent !important;
+  box-shadow:0 4px 14px rgba(88,44,131,.22);
+}
+.details-btn:hover{ filter:brightness(1.06) }
+
+/* Chat & Details areas */
+.chat-area, .details-area{ display:flex; flex-direction:column; gap:1rem; margin-top:1rem; height:100%; }
+.chat-header{ display:flex; align-items:center; justify-content:space-between; gap:1rem }
+.chat-body{ display:flex; flex-direction:column; gap:1rem; flex:1; }
+.chat-messages{ flex:1; overflow-y:auto; padding:1rem; border:1px solid var(--brand-border); border-radius:12px; background:#fafafa; max-height:400px; }
+.message{ margin-bottom:1rem; }
+.user-message{ text-align:right; }
+.user-message .message-content{ background:var(--ivey-green); color:white; display:inline-block; padding:0.75rem 1rem; border-radius:18px; max-width:80%; }
+.ai-message .message-content{ background:white; color:#1f2937; display:inline-block; padding:0.75rem 1rem; border-radius:18px; max-width:80%; border:1px solid var(--brand-border); }
+.typing-indicator{ display:flex; gap:4px; align-items:center; }
+.typing-indicator span{ width:8px; height:8px; border-radius:50%; background:var(--ivey-gray-10); animation:typing 1.4s infinite ease-in-out; }
+.typing-indicator span:nth-child(1){ animation-delay:-0.32s; }
+.typing-indicator span:nth-child(2){ animation-delay:-0.16s; }
+@keyframes typing{ 0%,80%,100%{ transform:scale(1); opacity:0.5; } 40%{ transform:scale(1.2); opacity:1; } }
+.input-group{ display:flex; gap:.5rem }
+.chat-input, input[type="text"]{
+  flex:1; padding:.8rem 1rem; border:1px solid var(--brand-border); border-radius:12px; background:#fff;
+  transition:border-color .2s ease, box-shadow .2s ease;
+}
+.chat-input::placeholder{ color:#97a0ab }
+.chat-input:focus{ outline:none; border-color:var(--ivey-green); box-shadow:0 0 0 4px rgba(3,70,56,.15) }
+
+/* EXPANSION STATES
+   - .expanded-full (chat): full-viewport takeover
+   - .expanded-details (details): in-flow wide expansion only
+*/
+.strategies-grid.expanding{ position:relative }
+.strategies-grid.expanded{ position:relative }
+
+/* Full-screen chat (immersive) */
+.strategy-card.expanded-full{
+  position:fixed !important;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+  width:100vw;
+  height:100vh;
+  border-radius:0;
+  padding:2.5rem;
+  box-shadow:none;
+  z-index:1000;
+  background:white;
+}
+/* Dim siblings only for full-screen chat */
+.strategies-grid.expanded .strategy-card:not(.expanded-full){
+  opacity:.6; filter:saturate(.9); transition:opacity 250ms ease;
+}
+.strategies-grid.expanded .strategy-card:not(.expanded-full):hover{ transform:none }
+
+/* In-flow details (document style) */
+.strategy-card.expanded-details{
+  grid-column:1 / -1;
+  padding:2rem;
+  border-radius:var(--radius);
+  box-shadow:var(--shadow-md);
+}
+
+/* Sticky header within expanded-full */
+.strategy-card.expanded-full .chat-header{
+  position:sticky; top:0; background:#fff; padding:0 0 1rem 0; margin-bottom:.5rem;
+  border-bottom:1px solid var(--brand-border); z-index:1;
+}
+.close-expanded{
+  border:1px solid transparent; background:transparent; padding:.5rem .75rem; border-radius:999px;
+  font-weight:650; color:var(--ivey-green); cursor:pointer;
+  transition:background-color .2s ease, box-shadow .2s ease, color .2s ease
+}
+.close-expanded:hover{ background:rgba(3,70,56,.06) }
+.close-expanded:focus-visible{ outline:none; box-shadow:0 0 0 4px rgba(3,70,56,.2) }
+
+/* Media & motion */
+@media (prefers-reduced-motion: reduce){
+  *{ transition:none !important; animation:none !important }
+}
+
+@media (max-width: 480px){
+  .strategies-grid{ grid-template-columns:1fr }
+}

@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install)",
+      "Bash(timeout 10 npm start)",
+      "Bash(npm start)",
+      "WebFetch(domain:www.dopplepress.com)",
+      "Bash(python:*)",
+      "Bash(git init:*)",
+      "Bash(git add:*)"
+    ],
+    "additionalDirectories": [
+      "C:\\Users\\james\\OneDrive\\Documents2\\GitHub\\analogueAI"
+    ]
+  }
+}
