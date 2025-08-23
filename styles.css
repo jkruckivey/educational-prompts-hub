@@ -75,7 +75,16 @@ body{
 }
 .strategy-card:hover{ transform:translateY(-2px); box-shadow:0 12px 38px rgba(3,70,56,.16) }
 
-.card-title{ font-weight:800; font-size:1.05rem; margin:0 0 .35rem 0 }
+.card-title{ 
+  font-weight:800; font-size:1.05rem; margin:0 0 .35rem 0;
+  position:relative; display:inline-block;
+}
+.card-title::after{
+  content:''; position:absolute; left:0; bottom:-2px;
+  width:0; height:2px; background:var(--ivey-green);
+  transition:width 0.3s ease-out;
+}
+.strategy-card:hover .card-title::after{ width:100% }
 .card-description{ color:var(--ivey-gray-10); font-size:.98rem }
 .card-author{ font-size:.85rem; color:var(--ivey-purple); font-weight:600; margin-top:.25rem; font-style:italic }
 .card-chapter{ font-size:.8rem; color:var(--ivey-gray-10); margin-top:.15rem; opacity:.8 }
@@ -108,7 +117,17 @@ body{
   padding:.7rem 1rem; border-radius:999px; font-weight:700; line-height:1;
   border:1px solid transparent; cursor:pointer;
   font-family:"Figtree",system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif;
+  position:relative; overflow:hidden;
   transition:transform .12s ease, box-shadow .2s ease, background-color .2s ease, border-color .2s ease, color .2s ease;
+}
+.btn::after, .btn-primary::after, .btn-secondary::after, .btn-outline::after, .btn-ghost::after, .details-btn::after, .explore-btn::after{
+  content:''; position:absolute; left:50%; bottom:8px;
+  width:0; height:1px; background:currentColor;
+  transition:all 0.25s ease-out;
+  transform:translateX(-50%);
+}
+.btn:hover::after, .btn-primary:hover::after, .btn-secondary:hover::after, .btn-outline:hover::after, .btn-ghost:hover::after, .details-btn:hover::after, .explore-btn:hover::after{
+  width:calc(100% - 2rem);
 }
 .btn:focus-visible, .btn-primary:focus-visible, .btn-secondary:focus-visible,
 .btn-outline:focus-visible, .btn-ghost:focus-visible, .details-btn:focus-visible, .explore-btn:focus-visible{
