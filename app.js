@@ -351,8 +351,8 @@ class PromptsApp {
       chatArea.querySelector('.chat-body').insertBefore(messagesContainer, chatArea.querySelector('.input-group'));
     }
 
-    // Add initial AI message
-    this.addMessage(messagesContainer, 'ai', this.generateInitialResponse(prompt?.prompt || ''));
+    // Get AI-powered initial message based on the prompt
+    this.generateIntelligentInitialResponse(messagesContainer, prompt);
 
     // Set up send functionality
     const sendMessage = () => {
@@ -399,26 +399,58 @@ class PromptsApp {
     this.addMessage(container, 'ai', response);
   }
 
-  generateInitialResponse(promptText) {
-    const prompt = this.currentPrompt;
+  async generateIntelligentInitialResponse(container, prompt) {
+    // Show loading message
+    this.addMessage(container, 'ai', '<div class="typing-indicator"><span></span><span></span><span></span></div>');
     
-    // Context-aware responses based on the specific prompt
-    if (prompt?.title?.includes('Generate Explanations, Examples, and Analogies')) {
-      return "I'm ready to create clear explanations with examples and analogies! To get started, I need two pieces of information:<br><br><strong>1. What concept would you like me to explain?</strong><br><strong>2. Who is your target audience?</strong> (e.g., high school students, college freshmen, professionals, etc.)<br><br>Just tell me these details and I'll provide a comprehensive explanation with examples and 5 different analogies!";
-    } else if (prompt?.title?.includes('Improve Class Slides')) {
-      return "I'm ready to help improve your PowerPoint presentation! Please share your slides or describe your current presentation content, and I'll give you specific, slide-by-slide recommendations to make them more engaging and pedagogically effective.";
-    } else if (prompt?.title?.includes('Generate Engaging In-Class Activities')) {
-      return "I'll help you add active learning activities to your class! Please share your class materials, learning objectives, or lesson plan, and I'll suggest 5-10 minute activities you can insert to boost student engagement.";
-    } else if (prompt?.title?.includes('Student Learning Template')) {
-      return "I'm ready to create a personalized learning template! What subject or concept would you like me to help your students learn? I'll provide a structured approach they can follow.";
-    } else if (prompt?.title?.includes('Diagnostic Quiz')) {
-      return "Let's create a diagnostic quiz to assess student understanding! What specific topic, concept, or learning objective should this quiz test? I'll create questions that reveal common misconceptions and knowledge gaps.";
-    } else if (prompt?.title?.includes('Teaching Assistant')) {
-      return "I'm your AI teaching assistant! What would you like help with today? I can help with lesson planning, grading rubrics, student questions, or any other teaching-related task.";
-    } else if (promptText?.includes('ask me two questions') || promptText?.includes('ask me')) {
-      return "I'm ready to help! To get started, please provide the key information this prompt needs, and I'll ask the right follow-up questions.";
-    } else {
-      return `I'm ready to help you use this educational prompt! Based on the prompt requirements, please share the specific details or context you'd like me to work with, and I'll provide a tailored response.`;
+    try {
+      const initializationMessage = `You are an expert educational AI assistant. A user is about to try this educational prompt: "${prompt?.prompt || ''}"
+
+The prompt is titled: "${prompt?.title || ''}" and is designed to: ${prompt?.description || ''}
+
+Please provide a welcoming and helpful initial response that:
+1. Briefly acknowledges what this prompt does
+2. Asks the user for the specific information needed to use this prompt effectively
+3. Is encouraging and clear about what they should provide
+
+Keep it conversational and helpful, like a friendly expert educator would.`;
+
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          message: initializationMessage,
+          prompt: 'You are a helpful educational AI assistant that guides users through educational prompts.'
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`API error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      const aiMessage = data.message || 'Hello! I\'m ready to help you with this educational prompt. What would you like to get started with?';
+
+      // Remove loading indicator and add actual response
+      const messages = container.querySelectorAll('.message');
+      if (messages.length > 0) {
+        container.removeChild(messages[messages.length - 1]);
+      }
+      
+      this.addMessage(container, 'ai', aiMessage);
+      
+    } catch (error) {
+      console.error('Failed to generate initial response:', error);
+      
+      // Remove loading indicator and add fallback
+      const messages = container.querySelectorAll('.message');
+      if (messages.length > 0) {
+        container.removeChild(messages[messages.length - 1]);
+      }
+      
+      this.addMessage(container, 'ai', 'Hello! I\'m ready to help you with this educational prompt. What information would you like to provide to get started?');
     }
   }
 
