@@ -34,11 +34,8 @@ app.post('/api/chat', async (req, res) => {
       body: JSON.stringify({
         model: 'claude-3-haiku-20240307',
         max_tokens: 1000,
+        system: prompt || 'You are a helpful educational assistant.',
         messages: [
-          {
-            role: 'system',
-            content: prompt || 'You are a helpful educational assistant.'
-          },
           {
             role: 'user',
             content: message
