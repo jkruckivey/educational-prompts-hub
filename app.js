@@ -105,6 +105,12 @@ class PromptsApp {
       card.querySelector('.chat-area')?.remove();
       card.querySelector('.details-area')?.remove();
 
+      if (isCollapse) {
+        console.log('Collapsing - cleaning up card');
+        card.removeAttribute('data-mode');
+        return;
+      }
+
       if (isChatMode) {
         console.log('Creating chat area');
         const chat = this.createChatArea(this.currentPrompt || {});
@@ -136,6 +142,7 @@ class PromptsApp {
 
       if (isCollapse) {
         console.log('Collapsing card');
+        injectContent(); // Clean up the card content
         return;
       }
 
