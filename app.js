@@ -317,6 +317,7 @@ class PromptsApp {
       <div class="chat-header">
         <h3 class="card-title" style="margin:0">Chat with AI</h3>
         <div style="display:flex; gap:.5rem;">
+          <button class="btn export-chat-btn" data-export="true">📥 Export Chat</button>
           <button class="btn details-btn" data-switch="details">View Example</button>
           <button class="close-expanded btn-ghost" aria-label="Close">← Back</button>
         </div>
@@ -343,6 +344,11 @@ class PromptsApp {
       e.stopPropagation();
       const parentCard = chatArea.closest('.strategy-card');
       this.expandCard(parentCard, this.currentPrompt, 'details');
+    });
+
+    chatArea.querySelector('[data-export="true"]')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.exportChatConversation(chatArea, prompt);
     });
 
     // Initialize chat functionality
@@ -540,6 +546,72 @@ Keep it conversational and helpful, like a friendly expert educator would.`;
       
       this.addMessage(container, 'ai', 'Hello! I\'m ready to help you with this educational prompt. What information would you like to provide to get started?');
     }
+  }
+
+  exportChatConversation(chatArea, prompt) {
+    const messagesContainer = chatArea.querySelector('.chat-messages');
+    if (!messagesContainer) {
+      alert('No conversation to export yet. Start chatting first!');
+      return;
+    }
+
+    const messages = messagesContainer.querySelectorAll('.message');
+    if (messages.length === 0) {
+      alert('No messages to export yet.');
+      return;
+    }
+
+    // Create formatted conversation text
+    const timestamp = new Date().toLocaleString();
+    const promptTitle = prompt?.title || 'Educational Prompt';
+    const promptAuthor = prompt?.author || '';
+    
+    let exportText = `Educational Prompts Hub - Conversation Export\n`;
+    exportText += `Generated: ${timestamp}\n`;
+    exportText += `Prompt: ${promptTitle}\n`;
+    if (promptAuthor) exportText += `Author: ${promptAuthor}\n`;
+    exportText += `\n${'='.repeat(60)}\n\n`;
+
+    messages.forEach((message, index) => {
+      const isUser = message.classList.contains('user-message');
+      const content = message.querySelector('.message-content');
+      
+      if (content && !content.querySelector('.typing-indicator')) {
+        const sender = isUser ? 'You' : 'AI Assistant';
+        const text = content.textContent.trim();
+        exportText += `${sender}:\n${text}\n\n`;
+      }
+    });
+
+    exportText += `${'='.repeat(60)}\n`;
+    exportText += `Exported from Educational Prompts Hub\n`;
+    exportText += `A curated collection of educational ChatGPT prompts from expert educators`;
+
+    // Create and download file
+    const blob = new Blob([exportText], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    
+    const filename = `${promptTitle.replace(/[^a-zA-Z0-9]/g, '_')}_conversation_${new Date().toISOString().slice(0, 10)}.txt`;
+    link.href = url;
+    link.download = filename;
+    link.style.display = 'none';
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+
+    // Show success feedback
+    const exportBtn = chatArea.querySelector('[data-export="true"]');
+    const originalText = exportBtn.textContent;
+    exportBtn.textContent = '✅ Exported!';
+    exportBtn.style.background = '#10b981';
+    
+    setTimeout(() => {
+      exportBtn.textContent = originalText;
+      exportBtn.style.background = '';
+    }, 2000);
   }
 
   async generateContextualResponse(userMessage) {
