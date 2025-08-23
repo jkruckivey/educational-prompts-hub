@@ -104,6 +104,7 @@ body{
   display:inline-flex; align-items:center; justify-content:center; gap:.5rem;
   padding:.7rem 1rem; border-radius:999px; font-weight:700; line-height:1;
   border:1px solid transparent; cursor:pointer;
+  font-family:"Figtree",system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif;
   transition:transform .12s ease, box-shadow .2s ease, background-color .2s ease, border-color .2s ease, color .2s ease;
 }
 .btn:focus-visible, .btn-primary:focus-visible, .btn-secondary:focus-visible,
@@ -153,6 +154,8 @@ body{
 .input-group{ display:flex; gap:.5rem }
 .chat-input, input[type="text"]{
   flex:1; padding:.8rem 1rem; border:1px solid var(--brand-border); border-radius:12px; background:#fff;
+  font-family:"Figtree",system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif;
+  font-weight:400; font-size:.95rem;
   transition:border-color .2s ease, box-shadow .2s ease;
 }
 .chat-input::placeholder{ color:#97a0ab }
