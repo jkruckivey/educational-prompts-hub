@@ -229,7 +229,7 @@ class PromptsApp {
       <div class="chat-header">
         <h3 class="card-title" style="margin:0">Chat with AI</h3>
         <div style="display:flex; gap:.5rem;">
-          <button class="btn details-btn" data-switch="details">View Details</button>
+          <button class="btn details-btn" data-switch="details">View Example</button>
           <button class="close-expanded btn-ghost" aria-label="Close">← Back</button>
         </div>
       </div>
@@ -399,17 +399,26 @@ class PromptsApp {
     this.addMessage(container, 'ai', response);
   }
 
-  generateInitialResponse(prompt) {
-    if (prompt.includes('ask me two questions') || prompt.includes('ask me')) {
-      return "I'm ready to help! To get started, I need to know: What specific concept would you like me to explain? And who is your target audience?";
-    } else if (prompt.includes('quiz') || prompt.includes('assessment')) {
-      return "I'm ready to create a diagnostic quiz for you! What specific topic should the quiz test?";
-    } else if (prompt.includes('debate') || prompt.includes('argument')) {
-      return "I'm ready to engage in this debate! Please present your first argument.";
-    } else if (prompt.includes('reflection') || prompt.includes('coach')) {
-      return "Hello! I'm here as your coach to help you reflect. Can you think of a recent experience you'd like to discuss?";
+  generateInitialResponse(promptText) {
+    const prompt = this.currentPrompt;
+    
+    // Context-aware responses based on the specific prompt
+    if (prompt?.title?.includes('Generate Explanations, Examples, and Analogies')) {
+      return "I'm ready to create clear explanations with examples and analogies! To get started, I need two pieces of information:<br><br><strong>1. What concept would you like me to explain?</strong><br><strong>2. Who is your target audience?</strong> (e.g., high school students, college freshmen, professionals, etc.)<br><br>Just tell me these details and I'll provide a comprehensive explanation with examples and 5 different analogies!";
+    } else if (prompt?.title?.includes('Improve Class Slides')) {
+      return "I'm ready to help improve your PowerPoint presentation! Please share your slides or describe your current presentation content, and I'll give you specific, slide-by-slide recommendations to make them more engaging and pedagogically effective.";
+    } else if (prompt?.title?.includes('Generate Engaging In-Class Activities')) {
+      return "I'll help you add active learning activities to your class! Please share your class materials, learning objectives, or lesson plan, and I'll suggest 5-10 minute activities you can insert to boost student engagement.";
+    } else if (prompt?.title?.includes('Student Learning Template')) {
+      return "I'm ready to create a personalized learning template! What subject or concept would you like me to help your students learn? I'll provide a structured approach they can follow.";
+    } else if (prompt?.title?.includes('Diagnostic Quiz')) {
+      return "Let's create a diagnostic quiz to assess student understanding! What specific topic, concept, or learning objective should this quiz test? I'll create questions that reveal common misconceptions and knowledge gaps.";
+    } else if (prompt?.title?.includes('Teaching Assistant')) {
+      return "I'm your AI teaching assistant! What would you like help with today? I can help with lesson planning, grading rubrics, student questions, or any other teaching-related task.";
+    } else if (promptText?.includes('ask me two questions') || promptText?.includes('ask me')) {
+      return "I'm ready to help! To get started, please provide the key information this prompt needs, and I'll ask the right follow-up questions.";
     } else {
-      return "Hello! I'm ready to help with this educational prompt. How would you like to get started?";
+      return `I'm ready to help you use this educational prompt! Based on the prompt requirements, please share the specific details or context you'd like me to work with, and I'll provide a tailored response.`;
     }
   }
 
