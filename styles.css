@@ -55,13 +55,20 @@ body{
 .site-title{ font-weight:900; letter-spacing:.01em; color:var(--ivey-green); margin:.5rem 0 0 0 }
 .site-subtitle{ color:var(--ivey-gray-10); margin:.25rem 0 0 0 }
 
-/* Grid */
-.strategies-grid{
+/* Sections */
+.recent-prompts-section{ margin-bottom:2rem; }
+.section-header{ display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; }
+.section-title{ font-weight:800; font-size:1.4rem; color:var(--ivey-green); margin:0; }
+.clear-recent-btn{ font-size:.85rem; padding:.5rem .75rem; }
+
+/* Grids */
+.strategies-grid, .recent-prompts-grid{
   display:grid;
   grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
   gap:1rem;
   align-items:stretch;
 }
+.recent-prompts-grid{ margin-bottom:1rem; }
 
 /* Card */
 .strategy-card{
@@ -74,6 +81,10 @@ body{
   transition:transform .18s ease, box-shadow .2s ease;
 }
 .strategy-card:hover{ transform:translateY(-2px); box-shadow:0 12px 38px rgba(3,70,56,.16) }
+
+/* Recent prompt indicator */
+.strategy-card.recent-prompt{ border-left:3px solid var(--ivey-purple); }
+.strategy-card.recent-prompt .card-title::before{ content:"🕒 "; font-size:.9em; }
 
 .card-title{ 
   font-weight:800; font-size:1.05rem; margin:0 0 .35rem 0;

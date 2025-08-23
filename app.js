@@ -6,75 +6,156 @@ class PromptsApp {
     console.log('Loaded prompts count:', this.prompts.length);
     this.currentPrompt = null;
     this.animating = false;
+    this.recentPrompts = this.loadRecentPrompts();
     this.init();
   }
 
   init() {
+    this.renderRecentPrompts();
     this.renderPrompts();
+    this.setupRecentPromptsHandlers();
+  }
+
+  // Recent Prompts Management
+  loadRecentPrompts() {
+    try {
+      const recent = localStorage.getItem('recent-prompts');
+      return recent ? JSON.parse(recent) : [];
+    } catch (error) {
+      console.error('Error loading recent prompts:', error);
+      return [];
+    }
+  }
+
+  saveRecentPrompts() {
+    try {
+      localStorage.setItem('recent-prompts', JSON.stringify(this.recentPrompts));
+    } catch (error) {
+      console.error('Error saving recent prompts:', error);
+    }
+  }
+
+  addToRecentPrompts(prompt) {
+    // Remove if already exists
+    this.recentPrompts = this.recentPrompts.filter(p => p.id !== prompt.id);
+    
+    // Add to beginning
+    this.recentPrompts.unshift({
+      ...prompt,
+      lastUsed: new Date().toISOString()
+    });
+    
+    // Keep only last 6
+    this.recentPrompts = this.recentPrompts.slice(0, 6);
+    
+    this.saveRecentPrompts();
+    this.renderRecentPrompts();
+  }
+
+  clearRecentPrompts() {
+    this.recentPrompts = [];
+    this.saveRecentPrompts();
+    this.renderRecentPrompts();
+  }
+
+  renderRecentPrompts() {
+    const section = document.getElementById('recentPromptsSection');
+    const grid = document.getElementById('recentPromptsGrid');
+    
+    if (!section || !grid) return;
+    
+    if (this.recentPrompts.length === 0) {
+      section.style.display = 'none';
+      return;
+    }
+    
+    section.style.display = 'block';
+    grid.innerHTML = '';
+    
+    this.recentPrompts.forEach(prompt => {
+      this.renderPromptCard(prompt, grid, true);
+    });
+  }
+
+  setupRecentPromptsHandlers() {
+    const clearBtn = document.getElementById('clearRecentBtn');
+    if (clearBtn) {
+      clearBtn.addEventListener('click', () => {
+        this.clearRecentPrompts();
+      });
+    }
   }
 
   renderPrompts() {
     console.log('Rendering prompts, count:', this.prompts.length);
     const grid = document.getElementById('strategiesGrid');
-    const template = document.getElementById('strategyCardTemplate');
-    if (!grid || !template) {
-      console.error('Missing grid or template');
+    
+    if (!grid) {
+      console.error('Missing grid');
       return;
     }
 
     grid.innerHTML = '';
-    this.prompts.forEach((prompt, index) => {
-      console.log(`Rendering prompt ${index}:`, prompt.title);
-      const frag = template.content.cloneNode(true);
-      const card = frag.querySelector('.strategy-card');
-      card.setAttribute('data-strategy-id', prompt.id);
-      card.querySelector('.card-title').textContent = prompt.title || '';
-      card.querySelector('.card-description').textContent = prompt.description || '';
-      const catEl = card.querySelector('.category-tag');
-      if (catEl) catEl.textContent = prompt.category || '';
-
-      // Add author information
-      const authorEl = card.querySelector('.card-author');
-      if (authorEl && prompt.author) {
-        authorEl.textContent = `By ${prompt.author}`;
-        authorEl.style.display = 'block';
-      }
-
-      // Add chapter information if available
-      const chapterEl = card.querySelector('.card-chapter');
-      if (chapterEl && prompt.chapter) {
-        chapterEl.textContent = prompt.chapter;
-        chapterEl.style.display = 'block';
-      }
-
-      // "Try This Prompt" -> full-screen chat
-      const exploreBtn = card.querySelector('.explore-btn');
-      if (exploreBtn) {
-        console.log('Adding click listener to explore button');
-        exploreBtn.addEventListener('click', (e) => {
-          console.log('Explore button clicked!');
-          e.stopPropagation();
-          this.expandCard(card, prompt, 'chat');  // full-screen
-        });
-      } else {
-        console.error('Explore button not found');
-      }
-
-      // "View Details" -> in-flow expansion
-      const detailsBtn = card.querySelector('.details-btn');
-      if (detailsBtn) {
-        console.log('Adding click listener to details button');
-        detailsBtn.addEventListener('click', (e) => {
-          console.log('Details button clicked!');
-          e.stopPropagation();
-          this.expandCard(card, prompt, 'details'); // in-flow
-        });
-      } else {
-        console.error('Details button not found');
-      }
-
-      grid.appendChild(frag);
+    this.prompts.forEach(prompt => {
+      this.renderPromptCard(prompt, grid, false);
     });
+  }
+
+  renderPromptCard(prompt, container, isRecent = false) {
+    const template = document.getElementById('strategyCardTemplate');
+    if (!template) {
+      console.error('Missing template');
+      return;
+    }
+
+    const frag = template.content.cloneNode(true);
+    const card = frag.querySelector('.strategy-card');
+    card.setAttribute('data-strategy-id', prompt.id);
+    
+    // Add recent indicator
+    if (isRecent) {
+      card.classList.add('recent-prompt');
+    }
+    
+    card.querySelector('.card-title').textContent = prompt.title || '';
+    card.querySelector('.card-description').textContent = prompt.description || '';
+    const catEl = card.querySelector('.category-tag');
+    if (catEl) catEl.textContent = prompt.category || '';
+
+    // Add author information
+    const authorEl = card.querySelector('.card-author');
+    if (authorEl && prompt.author) {
+      authorEl.textContent = `By ${prompt.author}`;
+      authorEl.style.display = 'block';
+    }
+
+    // Add chapter information if available
+    const chapterEl = card.querySelector('.card-chapter');
+    if (chapterEl && prompt.chapter) {
+      chapterEl.textContent = prompt.chapter;
+      chapterEl.style.display = 'block';
+    }
+
+    // "Try This Prompt" -> full-screen chat + track usage
+    const exploreBtn = card.querySelector('.explore-btn');
+    if (exploreBtn) {
+      exploreBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.addToRecentPrompts(prompt); // Track usage
+        this.expandCard(card, prompt, 'chat');
+      });
+    }
+
+    // "View Example" -> in-flow expansion
+    const detailsBtn = card.querySelector('.details-btn');
+    if (detailsBtn) {
+      detailsBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.expandCard(card, prompt, 'details');
+      });
+    }
+
+    container.appendChild(frag);
   }
 
   /* In-flow & full-screen expansion using View Transitions (with FLIP fallback)

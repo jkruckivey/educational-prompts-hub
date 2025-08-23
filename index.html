@@ -19,8 +19,20 @@
 
   <main class="main-content">
     <div class="container">
-      <!-- Prompt Cards Grid (no search/filters/results) -->
-      <section class="strategies-grid" id="strategiesGrid"></section>
+      <!-- Recent Prompts Section -->
+      <section class="recent-prompts-section" id="recentPromptsSection" style="display:none;">
+        <div class="section-header">
+          <h2 class="section-title">Recently Used Prompts</h2>
+          <button class="clear-recent-btn btn-ghost" id="clearRecentBtn">Clear All</button>
+        </div>
+        <div class="recent-prompts-grid" id="recentPromptsGrid"></div>
+      </section>
+
+      <!-- All Prompts Section -->
+      <section class="all-prompts-section">
+        <h2 class="section-title">All Educational Prompts</h2>
+        <div class="strategies-grid" id="strategiesGrid"></div>
+      </section>
     </div>
   </main>
 
