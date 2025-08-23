@@ -33,6 +33,20 @@ class PromptsApp {
       const catEl = card.querySelector('.category-tag');
       if (catEl) catEl.textContent = prompt.category || '';
 
+      // Add author information
+      const authorEl = card.querySelector('.card-author');
+      if (authorEl && prompt.author) {
+        authorEl.textContent = `By ${prompt.author}`;
+        authorEl.style.display = 'block';
+      }
+
+      // Add chapter information if available
+      const chapterEl = card.querySelector('.card-chapter');
+      if (chapterEl && prompt.chapter) {
+        chapterEl.textContent = prompt.chapter;
+        chapterEl.style.display = 'block';
+      }
+
       // "Try This Prompt" -> full-screen chat
       const exploreBtn = card.querySelector('.explore-btn');
       if (exploreBtn) {
@@ -256,6 +270,8 @@ class PromptsApp {
       title = 'Prompt',
       description = '',
       category = '',
+      author = '',
+      chapter = '',
       difficulty = '',
       time = '',
       tags = []
@@ -277,6 +293,8 @@ class PromptsApp {
         <div>
           <h4 style="margin:.25rem 0 0 0; font-weight:800">${title}</h4>
           <p class="card-description" style="margin:.35rem 0 0 0">${description}</p>
+          ${author ? `<div class="card-author" style="display:block; margin-top:.5rem;">By ${author}</div>` : ''}
+          ${chapter ? `<div class="card-chapter" style="display:block; margin-top:.25rem;">${chapter}</div>` : ''}
         </div>
 
         <div class="card-meta">

@@ -77,6 +77,8 @@ body{
 
 .card-title{ font-weight:800; font-size:1.05rem; margin:0 0 .35rem 0 }
 .card-description{ color:var(--ivey-gray-10); font-size:.98rem }
+.card-author{ font-size:.85rem; color:var(--ivey-purple); font-weight:600; margin-top:.25rem; font-style:italic }
+.card-chapter{ font-size:.8rem; color:var(--ivey-gray-10); margin-top:.15rem; opacity:.8 }
 .card-tags{ display:flex; flex-wrap:wrap; gap:.35rem; margin-top:.6rem }
 
 /* TAGS � make them look like tags, not buttons */
