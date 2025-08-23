@@ -19,6 +19,23 @@
 
   <main class="main-content">
     <div class="container">
+      <!-- Prompt Chain Progress -->
+      <section class="chain-progress-section" id="chainProgressSection" style="display:none;">
+        <div class="chain-progress-card">
+          <div class="chain-header">
+            <div>
+              <h3 class="chain-title" id="chainTitle">Workflow in Progress</h3>
+              <div class="chain-description" id="chainDescription"></div>
+            </div>
+            <button class="btn btn-ghost chain-cancel-btn" id="chainCancelBtn">✕ Cancel</button>
+          </div>
+          <div class="chain-steps" id="chainSteps"></div>
+          <div class="chain-actions">
+            <button class="btn btn-primary chain-next-btn" id="chainNextBtn">➜ Next Step</button>
+          </div>
+        </div>
+      </section>
+
       <!-- Recent Prompts Section -->
       <section class="recent-prompts-section" id="recentPromptsSection" style="display:none;">
         <div class="section-header">

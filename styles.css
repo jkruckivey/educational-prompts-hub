@@ -56,6 +56,28 @@ body{
 .site-subtitle{ color:var(--ivey-gray-10); margin:.25rem 0 0 0 }
 
 /* Sections */
+.chain-progress-section{ margin-bottom:2rem; }
+.chain-progress-card{ 
+  background:linear-gradient(135deg, var(--ivey-green) 0%, var(--ivey-green-600) 100%); 
+  color:white; padding:1.5rem; border-radius:var(--radius); 
+  box-shadow:var(--shadow-md); margin-bottom:1rem;
+}
+.chain-header{ display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:1rem; }
+.chain-title{ font-weight:800; font-size:1.2rem; margin:0; }
+.chain-description{ font-size:.9rem; opacity:.9; margin-top:.25rem; }
+.chain-cancel-btn{ color:rgba(255,255,255,.8) !important; border-color:rgba(255,255,255,.3) !important; }
+.chain-cancel-btn:hover{ background:rgba(255,255,255,.1) !important; color:white !important; }
+
+.chain-steps{ display:flex; gap:.5rem; margin-bottom:1rem; flex-wrap:wrap; }
+.chain-step{ 
+  background:rgba(255,255,255,.15); padding:.5rem .75rem; border-radius:20px; 
+  font-size:.85rem; font-weight:500; transition:all .2s ease;
+}
+.chain-step.completed{ background:rgba(255,255,255,.25); }
+.chain-step.current{ background:white; color:var(--ivey-green); font-weight:700; }
+.chain-actions{ text-align:right; }
+.chain-next-btn{ background:white !important; color:var(--ivey-green) !important; font-weight:700; }
+
 .recent-prompts-section{ margin-bottom:2rem; }
 .section-header{ display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; }
 .section-title{ font-weight:800; font-size:1.4rem; color:var(--ivey-green); margin:0; }

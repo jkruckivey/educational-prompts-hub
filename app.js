@@ -7,6 +7,8 @@ class PromptsApp {
     this.currentPrompt = null;
     this.animating = false;
     this.recentPrompts = this.loadRecentPrompts();
+    this.activeChain = this.loadActiveChain();
+    this.promptChains = this.initializePromptChains();
     this.init();
   }
 
@@ -14,6 +16,10 @@ class PromptsApp {
     this.renderRecentPrompts();
     this.renderPrompts();
     this.setupRecentPromptsHandlers();
+    this.setupChainHandlers();
+    if (this.activeChain) {
+      this.showChainProgress();
+    }
   }
 
   // Recent Prompts Management
@@ -56,6 +62,190 @@ class PromptsApp {
     this.recentPrompts = [];
     this.saveRecentPrompts();
     this.renderRecentPrompts();
+  }
+
+  // Prompt Chain Management
+  initializePromptChains() {
+    return {
+      'lesson-planning': {
+        name: 'Complete Lesson Planning',
+        description: 'Design a comprehensive lesson from start to finish',
+        steps: [
+          'Generate Explanations, Examples, and Analogies',
+          'Generate Engaging In-Class Activities', 
+          'Design Assessment Questions',
+          'Create Effective Rubrics'
+        ]
+      },
+      'content-development': {
+        name: 'Content Creation Workflow',
+        description: 'Develop and refine educational content',
+        steps: [
+          'Generate Explanations, Examples, and Analogies',
+          'Improve Class Slides',
+          'Generate Engaging In-Class Activities',
+          'Diagnostic Quiz Generator'
+        ]
+      },
+      'assessment-focused': {
+        name: 'Assessment Development',
+        description: 'Create comprehensive student assessments',
+        steps: [
+          'Design Assessment Questions',
+          'Create Effective Rubrics',
+          'Diagnostic Quiz Generator',
+          'Teaching Assistant'
+        ]
+      }
+    };
+  }
+
+  loadActiveChain() {
+    try {
+      const chain = localStorage.getItem('active-prompt-chain');
+      return chain ? JSON.parse(chain) : null;
+    } catch (error) {
+      console.error('Error loading active chain:', error);
+      return null;
+    }
+  }
+
+  saveActiveChain() {
+    try {
+      localStorage.setItem('active-prompt-chain', JSON.stringify(this.activeChain));
+    } catch (error) {
+      console.error('Error saving active chain:', error);
+    }
+  }
+
+  startPromptChain(chainKey, startingPromptId) {
+    const chain = this.promptChains[chainKey];
+    if (!chain) return;
+
+    this.activeChain = {
+      chainKey,
+      name: chain.name,
+      steps: chain.steps,
+      currentStep: 0,
+      completedSteps: [],
+      startedAt: new Date().toISOString()
+    };
+
+    // Mark the starting prompt as current
+    const currentPromptTitle = chain.steps[0];
+    const currentPrompt = this.prompts.find(p => p.title === currentPromptTitle);
+    if (currentPrompt) {
+      this.activeChain.currentPromptId = currentPrompt.id;
+    }
+
+    this.saveActiveChain();
+    this.showChainProgress();
+  }
+
+  advanceChain() {
+    if (!this.activeChain) return;
+
+    // Mark current step as completed
+    this.activeChain.completedSteps.push(this.activeChain.currentStep);
+    this.activeChain.currentStep++;
+
+    // Check if chain is complete
+    if (this.activeChain.currentStep >= this.activeChain.steps.length) {
+      this.completeChain();
+      return;
+    }
+
+    // Set next prompt
+    const nextPromptTitle = this.activeChain.steps[this.activeChain.currentStep];
+    const nextPrompt = this.prompts.find(p => p.title === nextPromptTitle);
+    if (nextPrompt) {
+      this.activeChain.currentPromptId = nextPrompt.id;
+    }
+
+    this.saveActiveChain();
+    this.showChainProgress();
+  }
+
+  completeChain() {
+    const chainName = this.activeChain.name;
+    this.activeChain = null;
+    localStorage.removeItem('active-prompt-chain');
+    this.hideChainProgress();
+    
+    // Show completion message
+    alert(`🎉 Congratulations! You've completed the "${chainName}" workflow. Great job building comprehensive educational materials!`);
+  }
+
+  showChainProgress() {
+    const section = document.getElementById('chainProgressSection');
+    const title = document.getElementById('chainTitle');
+    const description = document.getElementById('chainDescription');
+    const steps = document.getElementById('chainSteps');
+    
+    if (!section || !this.activeChain) return;
+    
+    const chain = this.promptChains[this.activeChain.chainKey];
+    
+    title.textContent = chain.name;
+    description.textContent = chain.description;
+    
+    // Render steps
+    steps.innerHTML = '';
+    this.activeChain.steps.forEach((stepTitle, index) => {
+      const stepEl = document.createElement('div');
+      stepEl.className = 'chain-step';
+      stepEl.textContent = `${index + 1}. ${stepTitle}`;
+      
+      if (this.activeChain.completedSteps.includes(index)) {
+        stepEl.classList.add('completed');
+      } else if (index === this.activeChain.currentStep) {
+        stepEl.classList.add('current');
+      }
+      
+      steps.appendChild(stepEl);
+    });
+    
+    section.style.display = 'block';
+  }
+
+  hideChainProgress() {
+    const section = document.getElementById('chainProgressSection');
+    if (section) {
+      section.style.display = 'none';
+    }
+  }
+
+  setupChainHandlers() {
+    const cancelBtn = document.getElementById('chainCancelBtn');
+    const nextBtn = document.getElementById('chainNextBtn');
+    
+    cancelBtn?.addEventListener('click', () => {
+      if (confirm('Are you sure you want to cancel this workflow? Your progress will be lost.')) {
+        this.activeChain = null;
+        localStorage.removeItem('active-prompt-chain');
+        this.hideChainProgress();
+      }
+    });
+    
+    nextBtn?.addEventListener('click', () => {
+      this.advanceChain();
+      
+      // Auto-navigate to next prompt
+      if (this.activeChain) {
+        const nextPrompt = this.prompts.find(p => p.id === this.activeChain.currentPromptId);
+        if (nextPrompt) {
+          const nextCard = document.querySelector(`[data-strategy-id="${nextPrompt.id}"]`);
+          if (nextCard) {
+            nextCard.scrollIntoView({ behavior: 'smooth' });
+            // Highlight the card briefly
+            nextCard.style.outline = '3px solid var(--ivey-green)';
+            setTimeout(() => {
+              nextCard.style.outline = '';
+            }, 2000);
+          }
+        }
+      }
+    });
   }
 
   renderRecentPrompts() {
@@ -784,6 +974,7 @@ SUGGESTION 3: [Prompt Title]|[Author]|[Brief reason why it's relevant]`;
       
       if (suggestions.length > 0) {
         this.renderSuggestions(suggestionsList, suggestions);
+        this.addWorkflowSuggestions(suggestionsList);
         suggestionsContainer.style.display = 'block';
         suggestionsContainer.setAttribute('data-loaded', 'true');
       }
@@ -852,6 +1043,58 @@ SUGGESTION 3: [Prompt Title]|[Author]|[Brief reason why it's relevant]`;
             this.expandCard(originalCard, suggestion, 'chat');
           }, 300);
         }
+      });
+      
+      container.appendChild(card);
+    });
+  }
+
+  addWorkflowSuggestions(container) {
+    // Add separator
+    const separator = document.createElement('div');
+    separator.style.cssText = 'margin: 1rem 0; border-top: 1px solid var(--brand-border); padding-top: 1rem;';
+    separator.innerHTML = '<h5 style="margin: 0 0 0.5rem 0; color: var(--ivey-purple); font-weight: 600;">🔗 Or start a complete workflow:</h5>';
+    container.appendChild(separator);
+
+    // Add workflow suggestions
+    Object.entries(this.promptChains).forEach(([key, chain]) => {
+      const card = document.createElement('div');
+      card.className = 'suggestion-card workflow-suggestion';
+      card.style.cssText = 'border-left: 3px solid var(--ivey-purple);';
+      card.innerHTML = `
+        <div>
+          <div class="suggestion-title">${chain.name}</div>
+          <div class="suggestion-author">${chain.description}</div>
+        </div>
+        <div class="suggestion-arrow">🚀</div>
+      `;
+      
+      card.addEventListener('click', () => {
+        // Close current chat and start workflow
+        const currentCard = container.closest('.strategy-card');
+        this.closeExpandedCard(currentCard);
+        
+        // Start the workflow
+        setTimeout(() => {
+          this.startPromptChain(key);
+          
+          // Navigate to first prompt
+          const firstPromptTitle = chain.steps[0];
+          const firstPrompt = this.prompts.find(p => p.title === firstPromptTitle);
+          if (firstPrompt) {
+            const firstCard = document.querySelector(`[data-strategy-id="${firstPrompt.id}"]`);
+            if (firstCard) {
+              firstCard.scrollIntoView({ behavior: 'smooth' });
+              // Auto-click to start the workflow
+              setTimeout(() => {
+                const exploreBtn = firstCard.querySelector('.explore-btn');
+                if (exploreBtn) {
+                  exploreBtn.click();
+                }
+              }, 500);
+            }
+          }
+        }, 300);
       });
       
       container.appendChild(card);
