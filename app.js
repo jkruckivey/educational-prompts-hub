@@ -327,7 +327,25 @@ class PromptsApp {
           <strong>Selected Prompt:</strong>
           <p class="card-description" style="margin:.25rem 0 0 0">${title}</p>
         </div>
+        <div class="file-upload-area" id="fileUploadArea" style="display:none;">
+          <div class="upload-dropzone" id="uploadDropzone">
+            <div class="upload-icon">📁</div>
+            <div class="upload-text">
+              <strong>Drop files here or click to browse</strong>
+              <div class="upload-subtext">PDF, PowerPoint, Word, or image files (max 50MB)</div>
+            </div>
+            <input type="file" id="fileInput" accept=".pdf,.ppt,.pptx,.doc,.docx,.txt,.jpg,.jpeg,.png" style="display:none;">
+          </div>
+          <div class="uploaded-file" id="uploadedFile" style="display:none;">
+            <div class="file-info">
+              <span class="file-name" id="fileName"></span>
+              <span class="file-size" id="fileSize"></span>
+            </div>
+            <button class="remove-file-btn" id="removeFileBtn">✕</button>
+          </div>
+        </div>
         <div class="input-group">
+          <button class="btn upload-toggle-btn" id="uploadToggleBtn">📎 Upload File</button>
           <input type="text" id="chatInput" placeholder="Type your message..." class="chat-input" disabled>
           <button id="sendMessage" class="btn btn-primary" disabled>Send</button>
         </div>
@@ -469,6 +487,99 @@ class PromptsApp {
         sendMessage();
       }
     });
+
+    // File upload functionality
+    this.initializeFileUpload(chatArea);
+  }
+
+  initializeFileUpload(chatArea) {
+    const uploadToggleBtn = chatArea.querySelector('#uploadToggleBtn');
+    const fileUploadArea = chatArea.querySelector('#fileUploadArea');
+    const uploadDropzone = chatArea.querySelector('#uploadDropzone');
+    const fileInput = chatArea.querySelector('#fileInput');
+    const uploadedFile = chatArea.querySelector('#uploadedFile');
+    const removeFileBtn = chatArea.querySelector('#removeFileBtn');
+
+    let currentFile = null;
+
+    // Toggle upload area
+    uploadToggleBtn?.addEventListener('click', () => {
+      const isVisible = fileUploadArea.style.display !== 'none';
+      fileUploadArea.style.display = isVisible ? 'none' : 'block';
+      uploadToggleBtn.textContent = isVisible ? '📎 Upload File' : '✕ Hide Upload';
+    });
+
+    // Click to browse
+    uploadDropzone?.addEventListener('click', () => {
+      fileInput?.click();
+    });
+
+    // Drag and drop
+    uploadDropzone?.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      uploadDropzone.classList.add('dragover');
+    });
+
+    uploadDropzone?.addEventListener('dragleave', () => {
+      uploadDropzone.classList.remove('dragover');
+    });
+
+    uploadDropzone?.addEventListener('drop', (e) => {
+      e.preventDefault();
+      uploadDropzone.classList.remove('dragover');
+      const files = e.dataTransfer.files;
+      if (files.length > 0) {
+        this.handleFileSelection(files[0], chatArea);
+      }
+    });
+
+    // File input change
+    fileInput?.addEventListener('change', (e) => {
+      if (e.target.files.length > 0) {
+        this.handleFileSelection(e.target.files[0], chatArea);
+      }
+    });
+
+    // Remove file
+    removeFileBtn?.addEventListener('click', () => {
+      this.clearUploadedFile(chatArea);
+    });
+  }
+
+  handleFileSelection(file, chatArea) {
+    const uploadDropzone = chatArea.querySelector('#uploadDropzone');
+    const uploadedFile = chatArea.querySelector('#uploadedFile');
+    const fileName = chatArea.querySelector('#fileName');
+    const fileSize = chatArea.querySelector('#fileSize');
+
+    // Update UI
+    fileName.textContent = file.name;
+    fileSize.textContent = this.formatFileSize(file.size);
+    
+    uploadDropzone.style.display = 'none';
+    uploadedFile.style.display = 'flex';
+
+    // Store file reference
+    chatArea.uploadedFile = file;
+  }
+
+  clearUploadedFile(chatArea) {
+    const uploadDropzone = chatArea.querySelector('#uploadDropzone');
+    const uploadedFile = chatArea.querySelector('#uploadedFile');
+    const fileInput = chatArea.querySelector('#fileInput');
+
+    uploadDropzone.style.display = 'block';
+    uploadedFile.style.display = 'none';
+    fileInput.value = '';
+    chatArea.uploadedFile = null;
+  }
+
+  formatFileSize(bytes) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   }
 
   addMessage(container, sender, content) {

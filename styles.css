@@ -207,6 +207,32 @@ body{
 .suggestion-author{ font-size:.75rem; color:var(--ivey-gray-10); font-style:italic; }
 .suggestion-arrow{ color:var(--ivey-green); font-weight:700; }
 
+/* File Upload */
+.file-upload-area{ margin-bottom:1rem; }
+.upload-dropzone{ 
+  border:2px dashed var(--brand-border); border-radius:12px; padding:2rem; text-align:center; 
+  cursor:pointer; transition:all .2s ease; background:#fafafa;
+}
+.upload-dropzone:hover, .upload-dropzone.dragover{ 
+  border-color:var(--ivey-green); background:rgba(3,70,56,.04); transform:translateY(-1px);
+}
+.upload-icon{ font-size:2rem; margin-bottom:.5rem; }
+.upload-text{ font-size:.95rem; color:#1f2937; }
+.upload-subtext{ font-size:.8rem; color:var(--ivey-gray-10); margin-top:.25rem; }
+.uploaded-file{ 
+  background:white; border:1px solid var(--brand-border); border-radius:8px; 
+  padding:.75rem; display:flex; justify-content:space-between; align-items:center;
+}
+.file-info{ display:flex; flex-direction:column; }
+.file-name{ font-weight:600; font-size:.9rem; }
+.file-size{ font-size:.8rem; color:var(--ivey-gray-10); }
+.remove-file-btn{ 
+  background:none; border:none; color:#dc2626; font-weight:700; font-size:1.1rem; 
+  cursor:pointer; padding:.25rem; border-radius:4px;
+}
+.remove-file-btn:hover{ background:#fee2e2; }
+.upload-toggle-btn{ background:var(--ivey-purple); color:white; }
+
 /* EXPANSION STATES
    - .expanded-full (chat): full-viewport takeover
    - .expanded-details (details): in-flow wide expansion only
