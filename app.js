@@ -357,7 +357,13 @@ class PromptsApp {
       console.log('Blocked: card missing or animating');
       return;
     }
-    const grid = document.getElementById('strategiesGrid');
+    
+    // Find the grid container - could be main strategies grid or recent prompts grid
+    let grid = card.closest('#strategiesGrid, #recentPromptsGrid');
+    if (!grid) {
+      // Fallback to main grid if not found in either
+      grid = document.getElementById('strategiesGrid');
+    }
     if (!grid) {
       console.error('Grid not found');
       return;
@@ -524,7 +530,7 @@ class PromptsApp {
           <strong>Selected Prompt:</strong>
           <p class="card-description" style="margin:.25rem 0 0 0">${title}</p>
         </div>
-        <div class="file-upload-area" id="fileUploadArea" style="display:block;">
+        <div class="file-upload-area" id="fileUploadArea" style="display:none;">
           <div class="upload-dropzone" id="uploadDropzone">
             <div class="upload-icon">📁</div>
             <div class="upload-text">
@@ -542,7 +548,7 @@ class PromptsApp {
           </div>
         </div>
         <div class="input-group">
-          <button class="btn upload-toggle-btn" id="uploadToggleBtn">✕ Hide Upload</button>
+          <button class="btn upload-toggle-btn" id="uploadToggleBtn">📎 Upload File</button>
           <input type="text" id="chatInput" placeholder="Type your message..." class="chat-input" disabled>
           <button id="sendMessage" class="btn btn-primary" disabled>Send</button>
         </div>
