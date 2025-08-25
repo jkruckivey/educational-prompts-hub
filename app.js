@@ -331,8 +331,7 @@ class PromptsApp {
     if (exploreBtn) {
       exploreBtn.addEventListener('click', (e) => {
         e.stopPropagation();
-        console.log('Explore button clicked for prompt:', prompt?.title);
-        console.log('Card parent:', card.parentElement?.id);
+        // Debug: console.log('Explore button clicked for prompt:', prompt?.title);
         this.addToRecentPrompts(prompt); // Track usage
         this.expandCard(card, prompt, 'chat');
       });
@@ -371,11 +370,9 @@ class PromptsApp {
       }
     }
     
-    console.log('Grid found:', grid?.id);
     if (!grid) {
       // Final fallback to main grid
       grid = document.getElementById('strategiesGrid');
-      console.log('Using fallback grid:', grid?.id);
     }
     if (!grid) {
       console.error('Grid not found');
