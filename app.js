@@ -331,9 +331,15 @@ class PromptsApp {
     if (exploreBtn) {
       exploreBtn.addEventListener('click', (e) => {
         e.stopPropagation();
-        // Debug: console.log('Explore button clicked for prompt:', prompt?.title);
-        this.addToRecentPrompts(prompt); // Track usage
-        this.expandCard(card, prompt, 'chat');
+        
+        if (isRecent) {
+          // For recent prompts, navigate to the original card instead of expanding in place
+          this.navigateToOriginalPrompt(prompt);
+        } else {
+          // Regular expansion for main grid cards
+          this.addToRecentPrompts(prompt); // Track usage
+          this.expandCard(card, prompt, 'chat');
+        }
       });
     }
 
@@ -353,9 +359,7 @@ class PromptsApp {
      mode: 'chat' | 'details' | 'collapse'
   */
   expandCard(card, prompt, mode = 'chat') {
-    console.log('expandCard called with mode:', mode, 'prompt:', prompt?.title);
     if (!card || this.animating) {
-      console.log('Blocked: card missing or animating');
       return;
     }
     
@@ -388,28 +392,22 @@ class PromptsApp {
 
     // swap content per mode
     const injectContent = () => {
-      console.log('injectContent called, removing existing areas');
       card.querySelector('.chat-area')?.remove();
       card.querySelector('.details-area')?.remove();
 
       if (isCollapse) {
-        console.log('Collapsing - cleaning up card');
         card.removeAttribute('data-mode');
         return;
       }
 
       if (isChatMode) {
-        console.log('Creating chat area');
         const chat = this.createChatArea(this.currentPrompt || {});
         card.appendChild(chat);
         card.setAttribute('data-mode', 'chat');
-        console.log('Chat area added to card');
       } else if (isDetailsMode) {
-        console.log('Creating details area');
         const details = this.createDetailsArea(this.currentPrompt || {});
         card.appendChild(details);
         card.setAttribute('data-mode', 'details');
-        console.log('Details area added to card');
       }
     };
 
@@ -422,28 +420,19 @@ class PromptsApp {
       (isDetailsMode && !isCurrentlyDetails);
 
     const runToggle = () => {
-      console.log('runToggle called, mode:', mode);
       // Remove all expansion classes first
       card.classList.remove('expanded-full', 'expanded-details');
       grid.classList.remove('expanded');
-      console.log('Removed existing classes');
 
       if (isCollapse) {
-        console.log('Collapsing card');
         injectContent(); // Clean up the card content
         return;
       }
 
       if (isChatMode) {
-        console.log('Adding chat mode classes');
-        console.log('Grid element:', grid.id, grid.classList.toString());
-        console.log('Card before:', card.classList.toString());
         grid.classList.add('expanded');      // dim siblings
         card.classList.add('expanded-full'); // full-screen
-        console.log('Grid after:', grid.classList.toString());
-        console.log('Card after:', card.classList.toString());
       } else if (isDetailsMode) {
-        console.log('Adding details mode classes');
         // If we were already in full-screen mode (from chat), maintain full-screen for details
         if (isCurrentlyFull) {
           grid.classList.add('expanded');      // keep siblings dimmed
@@ -452,10 +441,8 @@ class PromptsApp {
           // in-flow wide card; no grid dimming
           card.classList.add('expanded-details');
         }
-        console.log('Added details mode classes');
       }
 
-      console.log('Calling injectContent');
       injectContent();
     };
 
@@ -515,6 +502,33 @@ class PromptsApp {
       };
       grid.addEventListener('transitionend', cleanup, { once: true });
     });
+  }
+
+  navigateToOriginalPrompt(prompt) {
+    // Find the original card in the main strategies grid
+    const originalCard = document.querySelector(`#strategiesGrid [data-strategy-id="${prompt.id}"]`);
+    if (originalCard) {
+      // Scroll to the original card
+      originalCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      
+      // Highlight the card briefly
+      originalCard.style.outline = '3px solid var(--ivey-green)';
+      originalCard.style.outlineOffset = '4px';
+      
+      // Auto-click the "Try This Prompt" button after scrolling
+      setTimeout(() => {
+        const exploreBtn = originalCard.querySelector('.explore-btn');
+        if (exploreBtn) {
+          exploreBtn.click();
+        }
+        
+        // Remove highlight after expansion starts
+        setTimeout(() => {
+          originalCard.style.outline = '';
+          originalCard.style.outlineOffset = '';
+        }, 1000);
+      }, 800);
+    }
   }
 
   closeExpandedCard(card) {
