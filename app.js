@@ -400,6 +400,7 @@ class PromptsApp {
     // Determine if we're expanding or switching/collapsing
     const isCurrentlyFull = card.classList.contains('expanded-full');
     const isCurrentlyDetails = card.classList.contains('expanded-details');
+    const isCurrentlyExpanded = isCurrentlyFull || isCurrentlyDetails;
     const isExpandingNew =
       (isChatMode && !isCurrentlyFull) ||
       (isDetailsMode && !isCurrentlyDetails);
@@ -424,9 +425,15 @@ class PromptsApp {
         console.log('Added expanded-full class to card');
       } else if (isDetailsMode) {
         console.log('Adding details mode classes');
-        // in-flow wide card; no grid dimming
-        card.classList.add('expanded-details');
-        console.log('Added expanded-details class to card');
+        // If we were already in full-screen mode (from chat), maintain full-screen for details
+        if (isCurrentlyFull) {
+          grid.classList.add('expanded');      // keep siblings dimmed
+          card.classList.add('expanded-full'); // maintain full-screen
+        } else {
+          // in-flow wide card; no grid dimming
+          card.classList.add('expanded-details');
+        }
+        console.log('Added details mode classes');
       }
 
       console.log('Calling injectContent');
@@ -630,6 +637,7 @@ class PromptsApp {
     details.querySelector('[data-switch="chat"]')?.addEventListener('click', (e) => {
       e.stopPropagation();
       const parentCard = details.closest('.strategy-card');
+      this.addToRecentPrompts(this.currentPrompt); // Track usage when switching to chat
       this.expandCard(parentCard, this.currentPrompt, 'chat');
     });
 
