@@ -13,7 +13,13 @@
       "Bash(git branch:*)",
       "Bash(git push:*)",
       "Bash(claude mcp add:*)",
-      "Bash(claude mcp:*)"
+      "Bash(claude mcp:*)",
+      "Bash(taskkill:*)",
+      "Read(/C:\\Users\\jkruck\\Ivey Business School\\EdTech Lab - Documents\\Github\\AI Prototyping/**)",
+      "Read(/C:\\Users\\jkruck\\Ivey Business School\\EdTech Lab - Documents\\Github\\AI Prototyping/**)",
+      "Read(/C:\\Users\\jkruck\\Ivey Business School\\EdTech Lab - Documents\\Github/**)",
+      "Read(/C:\\Users\\jkruck\\Ivey Business School\\EdTech Lab - Documents\\Github\\AI Prototyping/**)",
+      "Bash(gh repo create:*)"
     ],
     "additionalDirectories": [
       "C:\\Users\\james\\OneDrive\\Documents2\\GitHub\\analogueAI"
