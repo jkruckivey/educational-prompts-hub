@@ -331,6 +331,8 @@ class PromptsApp {
     if (exploreBtn) {
       exploreBtn.addEventListener('click', (e) => {
         e.stopPropagation();
+        console.log('Explore button clicked for prompt:', prompt?.title);
+        console.log('Card parent:', card.parentElement?.id);
         this.addToRecentPrompts(prompt); // Track usage
         this.expandCard(card, prompt, 'chat');
       });
@@ -360,9 +362,11 @@ class PromptsApp {
     
     // Find the grid container - could be main strategies grid or recent prompts grid
     let grid = card.closest('#strategiesGrid, #recentPromptsGrid');
+    console.log('Grid found by closest():', grid?.id);
     if (!grid) {
       // Fallback to main grid if not found in either
       grid = document.getElementById('strategiesGrid');
+      console.log('Using fallback grid:', grid?.id);
     }
     if (!grid) {
       console.error('Grid not found');
