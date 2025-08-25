@@ -362,9 +362,18 @@ class PromptsApp {
     
     // Find the grid container - could be main strategies grid or recent prompts grid
     let grid = card.closest('#strategiesGrid, #recentPromptsGrid');
-    console.log('Grid found by closest():', grid?.id);
+    
+    // If closest() doesn't find it, check if the direct parent is one of our grids
     if (!grid) {
-      // Fallback to main grid if not found in either
+      const parent = card.parentElement;
+      if (parent && (parent.id === 'strategiesGrid' || parent.id === 'recentPromptsGrid')) {
+        grid = parent;
+      }
+    }
+    
+    console.log('Grid found:', grid?.id);
+    if (!grid) {
+      // Final fallback to main grid
       grid = document.getElementById('strategiesGrid');
       console.log('Using fallback grid:', grid?.id);
     }
