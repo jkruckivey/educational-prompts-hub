@@ -524,7 +524,7 @@ class PromptsApp {
           <strong>Selected Prompt:</strong>
           <p class="card-description" style="margin:.25rem 0 0 0">${title}</p>
         </div>
-        <div class="file-upload-area" id="fileUploadArea" style="display:none;">
+        <div class="file-upload-area" id="fileUploadArea" style="display:block;">
           <div class="upload-dropzone" id="uploadDropzone">
             <div class="upload-icon">📁</div>
             <div class="upload-text">
@@ -542,7 +542,7 @@ class PromptsApp {
           </div>
         </div>
         <div class="input-group">
-          <button class="btn upload-toggle-btn" id="uploadToggleBtn">📎 Upload File</button>
+          <button class="btn upload-toggle-btn" id="uploadToggleBtn">✕ Hide Upload</button>
           <input type="text" id="chatInput" placeholder="Type your message..." class="chat-input" disabled>
           <button id="sendMessage" class="btn btn-primary" disabled>Send</button>
         </div>
@@ -671,10 +671,23 @@ class PromptsApp {
     // Set up send functionality
     const sendMessage = () => {
       const message = chatInput.value.trim();
-      if (message) {
-        this.addMessage(messagesContainer, 'user', message);
+      const uploadedFile = chatArea.uploadedFile;
+      
+      if (message || uploadedFile) {
+        // Show user message
+        let displayMessage = message;
+        if (uploadedFile) {
+          displayMessage = message ? `${message} [📎 ${uploadedFile.name}]` : `[📎 ${uploadedFile.name}]`;
+        }
+        
+        this.addMessage(messagesContainer, 'user', displayMessage);
         chatInput.value = '';
-        this.handleUserMessage(messagesContainer, message);
+        this.handleUserMessage(messagesContainer, message, uploadedFile);
+        
+        // Clear uploaded file after sending
+        if (uploadedFile) {
+          this.clearUploadedFile(chatArea);
+        }
       }
     };
 
@@ -788,9 +801,33 @@ class PromptsApp {
     container.scrollTop = container.scrollHeight;
   }
 
-  async handleUserMessage(container, message) {
+  async handleUserMessage(container, message, uploadedFile = null) {
     // Show typing indicator
     this.addMessage(container, 'ai', '<div class="typing-indicator"><span></span><span></span><span></span></div>');
+    
+    // If there's a file, upload it first
+    let fileAnalysis = '';
+    if (uploadedFile) {
+      try {
+        const formData = new FormData();
+        formData.append('file', uploadedFile);
+        
+        const uploadResponse = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData
+        });
+        
+        if (uploadResponse.ok) {
+          const uploadData = await uploadResponse.json();
+          fileAnalysis = uploadData.message || '';
+        } else {
+          fileAnalysis = 'Failed to upload file. ';
+        }
+      } catch (error) {
+        console.error('File upload error:', error);
+        fileAnalysis = 'Error uploading file. ';
+      }
+    }
     
     // Simulate AI processing
     await new Promise(resolve => setTimeout(resolve, 1500));
@@ -801,8 +838,9 @@ class PromptsApp {
       container.removeChild(messages[messages.length - 1]);
     }
     
-    // Generate contextual AI response
-    const response = await this.generateContextualResponse(message);
+    // Generate contextual AI response (including file analysis if present)
+    const contextMessage = fileAnalysis ? `${fileAnalysis} User message: ${message}` : message;
+    const response = await this.generateContextualResponse(contextMessage);
     this.addMessage(container, 'ai', response);
 
     // Check if we should show follow-up suggestions
