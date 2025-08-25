@@ -2,6 +2,16 @@
 
 This file tracks our development work together to help maintain continuity across sessions.
 
+## 🤖 Instructions for Claude
+**IMPORTANT**: Always update this log at the end of each development session with:
+- New issues discovered and their solutions
+- Files modified and specific changes made
+- Commit references for all changes
+- Current state and any outstanding issues
+- Update the "Last Updated" date
+
+Keep entries detailed but concise. Include file paths and line numbers when relevant.
+
 ## Project Overview
 - **Educational Prompts Hub** - Web app for exploring curated educational ChatGPT prompts
 - **Tech Stack**: Node.js, Express, Vanilla JS, Claude API integration
@@ -49,18 +59,37 @@ This file tracks our development work together to help maintain continuity acros
 
 ---
 
+### Session 3 - Recent Prompts Debug & Session Log Enhancement
+**Date**: 2025-01-25 (continued)
+
+#### Issues Addressed:
+4. **Recent prompts "Try This Prompt" button not working**
+   - **Problem**: Button clicks on recent prompt cards do nothing (but "View Example" works)
+   - **Investigation**: Added debugging console logs to track button clicks and grid detection
+   - **Files**: `app.js` lines 334-335, 365-369
+   - **Commit**: `e14fcdd` - "Add debugging for recent prompts button click issue"
+   - **Status**: 🔍 In progress - debugging deployed, awaiting browser console output
+
+5. **Enhanced SESSION_LOG.md with instructions**
+   - **Added**: Instructions for Claude to always update log after each session
+   - **Purpose**: Ensure continuity tracking remains current and useful
+   - **File**: `SESSION_LOG.md` lines 5-13
+
+---
+
 ## Current State
-- ✅ Recent prompts expansion working
+- ✅ Recent prompts expansion (fixed previously, but debugging new issue)
 - ✅ File upload area defaults closed
 - ✅ AI chat has proper markdown formatting
+- 🔍 Recent prompts "Try This Prompt" button - debugging in progress
 - ✅ All changes pushed to GitHub
 
 ## Next Session Prep
 When resuming work:
 1. Point Claude to read this `SESSION_LOG.md` file
 2. Current working branch: `main`
-3. Latest commit: `1de982e` 
-4. No known outstanding issues
+3. Latest commit: `e14fcdd` 
+4. Outstanding issue: Recent prompts button click - check browser console for debugging output
 
 ---
 
@@ -88,4 +117,4 @@ educational-prompts-hub/
 
 ---
 
-*Last Updated: 2025-01-25*
+*Last Updated: 2025-01-25 - Session 3*
