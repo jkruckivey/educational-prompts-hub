@@ -201,6 +201,17 @@ body{
 .user-message{ text-align:right; }
 .user-message .message-content{ background:var(--ivey-green); color:white; display:inline-block; padding:0.75rem 1rem; border-radius:18px; max-width:80%; }
 .ai-message .message-content{ background:white; color:#1f2937; display:inline-block; padding:0.75rem 1rem; border-radius:18px; max-width:80%; border:1px solid var(--brand-border); }
+
+/* AI message formatting */
+.ai-message .message-content p{ margin:0.5rem 0; line-height:1.6; }
+.ai-message .message-content p:first-child{ margin-top:0; }
+.ai-message .message-content p:last-child{ margin-bottom:0; }
+.ai-message .message-content ul, .ai-message .message-content ol{ margin:0.5rem 0; padding-left:1.5rem; }
+.ai-message .message-content li{ margin:0.25rem 0; line-height:1.5; }
+.ai-message .message-content strong{ font-weight:600; color:var(--ivey-green); }
+.ai-message .message-content em{ font-style:italic; }
+.ai-message .message-content ol{ list-style-type:decimal; }
+.ai-message .message-content ul{ list-style-type:disc; }
 .typing-indicator{ display:flex; gap:4px; align-items:center; }
 .typing-indicator span{ width:8px; height:8px; border-radius:50%; background:var(--ivey-gray-10); animation:typing 1.4s infinite ease-in-out; }
 .typing-indicator span:nth-child(1){ animation-delay:-0.32s; }

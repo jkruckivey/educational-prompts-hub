@@ -799,10 +799,71 @@ class PromptsApp {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   }
 
+  formatMarkdown(text) {
+    // Simple markdown processor for AI messages
+    let formatted = text;
+
+    // Convert **bold** text first
+    formatted = formatted.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    
+    // Convert *italic* text
+    formatted = formatted.replace(/\*(.+?)\*/g, '<em>$1</em>');
+
+    // Handle numbered lists within sentences (like "1) item" or "1. item")  
+    formatted = formatted.replace(/(\d+)[\.\)]\s+([^0-9]+?)(?=\s+\d+[\.\)]|\s*$)/g, '<li>$2</li>');
+    
+    // Handle traditional numbered lists at start of lines
+    formatted = formatted.replace(/^(\d+)[\.\)]\s+(.+)$/gm, '<li>$2</li>');
+    
+    // Handle bullet points (- item, * item)
+    formatted = formatted.replace(/^[-*]\s+(.+)$/gm, '<li>$1</li>');
+
+    // Wrap consecutive list items in <ol> or <ul> tags
+    if (formatted.includes('<li>')) {
+      // Check if we have numbered items (originally started with digits)
+      const hasNumberedItems = /\d+[\.\)]\s+/.test(text);
+      const listTag = hasNumberedItems ? 'ol' : 'ul';
+      
+      formatted = formatted.replace(/(<li>.*?<\/li>)(\s*<li>.*?<\/li>)*/gs, (match) => {
+        return `<${listTag}>${match}</${listTag}>`;
+      });
+    }
+
+    // Convert double line breaks to paragraph breaks, but preserve lists
+    if (!formatted.includes('<li>')) {
+      formatted = formatted.replace(/\n\n/g, '</p><p>');
+      // Convert single line breaks to <br> only if not in a list
+      formatted = formatted.replace(/\n/g, '<br>');
+      
+      // Wrap in paragraph tags if not already wrapped and not a list
+      if (!formatted.includes('<p>') && !formatted.includes('<ol>') && !formatted.includes('<ul>')) {
+        formatted = '<p>' + formatted + '</p>';
+      }
+    } else {
+      // For content with lists, be more careful about paragraph handling
+      const parts = formatted.split(/(<[ou]l>.*?<\/[ou]l>)/gs);
+      formatted = parts.map(part => {
+        if (part.includes('<ol>') || part.includes('<ul>')) {
+          return part; // Keep lists as-is
+        } else if (part.trim()) {
+          // Wrap non-list content in paragraphs
+          return '<p>' + part.trim().replace(/\n/g, '<br>') + '</p>';
+        }
+        return part;
+      }).join('');
+    }
+
+    return formatted;
+  }
+
   addMessage(container, sender, content) {
     const messageDiv = document.createElement('div');
     messageDiv.className = `message ${sender}-message`;
-    messageDiv.innerHTML = `<div class="message-content">${content}</div>`;
+    
+    // Format AI messages with markdown processing
+    const formattedContent = sender === 'ai' ? this.formatMarkdown(content) : content;
+    
+    messageDiv.innerHTML = `<div class="message-content">${formattedContent}</div>`;
     container.appendChild(messageDiv);
     container.scrollTop = container.scrollHeight;
   }
