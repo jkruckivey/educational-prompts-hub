@@ -436,9 +436,12 @@ class PromptsApp {
 
       if (isChatMode) {
         console.log('Adding chat mode classes');
+        console.log('Grid element:', grid.id, grid.classList.toString());
+        console.log('Card before:', card.classList.toString());
         grid.classList.add('expanded');      // dim siblings
         card.classList.add('expanded-full'); // full-screen
-        console.log('Added expanded-full class to card');
+        console.log('Grid after:', grid.classList.toString());
+        console.log('Card after:', card.classList.toString());
       } else if (isDetailsMode) {
         console.log('Adding details mode classes');
         // If we were already in full-screen mode (from chat), maintain full-screen for details

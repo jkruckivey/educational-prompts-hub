@@ -271,7 +271,7 @@ body{
    - .expanded-details (details): in-flow wide expansion only
 */
 .strategies-grid.expanding{ position:relative }
-.strategies-grid.expanded{ position:relative }
+.strategies-grid.expanded, .recent-prompts-grid.expanded{ position:relative }
 
 /* Full-screen chat (immersive) */
 .strategy-card.expanded-full{
@@ -289,10 +289,12 @@ body{
   background:white;
 }
 /* Dim siblings only for full-screen chat */
-.strategies-grid.expanded .strategy-card:not(.expanded-full){
+.strategies-grid.expanded .strategy-card:not(.expanded-full),
+.recent-prompts-grid.expanded .strategy-card:not(.expanded-full){
   opacity:.6; filter:saturate(.9); transition:opacity 250ms ease;
 }
-.strategies-grid.expanded .strategy-card:not(.expanded-full):hover{ transform:none }
+.strategies-grid.expanded .strategy-card:not(.expanded-full):hover,
+.recent-prompts-grid.expanded .strategy-card:not(.expanded-full):hover{ transform:none }
 
 /* In-flow details (document style) */
 .strategy-card.expanded-details{
