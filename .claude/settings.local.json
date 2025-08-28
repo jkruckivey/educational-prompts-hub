@@ -19,7 +19,18 @@
       "Read(/C:\\Users\\jkruck\\Ivey Business School\\EdTech Lab - Documents\\Github\\AI Prototyping/**)",
       "Read(/C:\\Users\\jkruck\\Ivey Business School\\EdTech Lab - Documents\\Github/**)",
       "Read(/C:\\Users\\jkruck\\Ivey Business School\\EdTech Lab - Documents\\Github\\AI Prototyping/**)",
-      "Bash(gh repo create:*)"
+      "Bash(gh repo create:*)",
+      "Bash(del \"C:\\Users\\jkruck\\Ivey Business School\\EdTech Lab - Documents\\Github\\linear-regression-demo\\index-IBS-PF4RAYDJ.html\")",
+      "WebSearch",
+      "Bash(git checkout:*)",
+      "Bash(git merge:*)",
+      "Bash(git remote set-url:*)",
+      "Bash(git fetch:*)",
+      "Read(/C:\\Users\\jkruck\\Ivey Business School\\EdTech Lab - Documents\\Github/**)",
+      "Bash(git log:*)",
+      "Read(/C:\\Users\\jkruck\\Ivey Business School\\EdTech Lab - Documents\\Github\\business-of-marketing-in-sport/**)",
+      "Read(/C:\\Users\\jkruck\\Ivey Business School\\EdTech Lab - Documents\\Github\\business-of-marketing-in-sport/**)",
+      "Read(/C:\\Users\\jkruck\\Ivey Business School\\EdTech Lab - Documents\\Github\\business-of-marketing-in-sport/**)"
     ],
     "additionalDirectories": [
       "C:\\Users\\james\\OneDrive\\Documents2\\GitHub\\analogueAI"
